@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 @Service
 public class StatisticsServiceImpl implements StatisticsService {
