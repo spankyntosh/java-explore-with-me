@@ -31,15 +31,15 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public Collection<StatsResponseDTO> getStatistics(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        if (isNull(uris) & isNull(unique)) {
+        if (isNull(uris) && isNull(unique)) {
             return statisticsRepository.getAllStatistics(start, end);
         }
 
-        if (isNull(uris) & nonNull(unique)) {
+        if (isNull(uris) && nonNull(unique)) {
             return statisticsRepository.getAllStatisticsWithDistinctIp(start, end);
         }
 
-        if (isNull(unique) & nonNull(uris)) {
+        if (isNull(unique) && nonNull(uris)) {
             return statisticsRepository.getStatisticsByUri(start, end, uris);
         }
 

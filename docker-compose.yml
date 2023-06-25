@@ -1,12 +1,12 @@
 version: '3.1'
 services:
-  stats-server:
+  statistics-server:
     build: ./statistics-service/statistics-server
     container_name: statistics-server
     ports:
       - "9090:9090"
     depends_on:
-      - stats-db
+      - statistics-db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://statistics-db:5432/statistics
       - POSTGRES_USER=root
