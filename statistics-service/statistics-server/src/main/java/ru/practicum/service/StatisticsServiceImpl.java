@@ -31,18 +31,16 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public Collection<StatsResponseDTO> getStatistics(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        if (isNull(uris) && isNull(unique)) {
-            return statisticsRepository.getAllStatistics(start, end);
-        }
-
-        if (isNull(uris) && nonNull(unique)) {
-            return statisticsRepository.getAllStatisticsWithDistinctIp(start, end);
-        }
-
-        if (isNull(unique) && nonNull(uris)) {
+        if (isNull(uris) || uris.isEmpty()) {
+            if (unique) {
+                return statisticsRepository.getAllStatisticsWithDistinctIp(start, end);
+            } else {
+                return statisticsRepository.getAllStatistics(start, end);
+            }
+        } else if (unique) {
+            return statisticsRepository.getStatisticsByUriWithDistinctIp(start, end, uris);
+        } else {
             return statisticsRepository.getStatisticsByUri(start, end, uris);
         }
-
-        return statisticsRepository.getStatisticsByUriWithDistinctIp(start, end, uris);
     }
 }

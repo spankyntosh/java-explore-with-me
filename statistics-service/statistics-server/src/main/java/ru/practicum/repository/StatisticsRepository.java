@@ -19,7 +19,7 @@ public interface StatisticsRepository extends JpaRepository<Statistics, Integer>
             "ORDER BY COUNT(s.ip) DESC")
     Collection<StatsResponseDTO> getAllStatistics(LocalDateTime start, LocalDateTime end);
 
-    @Query("SELECT new ru.practicum.common.StatsResponseDTO(s.appName, s.uri, COUNT(s.ip)) " +
+    @Query("SELECT new ru.practicum.common.StatsResponseDTO(s.appName, s.uri, COUNT(DISTINCT s.ip)) " +
             "FROM Statistics AS s " +
             "WHERE s.timestamp BETWEEN ?1 AND ?2 " +
             "GROUP BY s.appName, s.uri " +
@@ -34,7 +34,7 @@ public interface StatisticsRepository extends JpaRepository<Statistics, Integer>
             "ORDER BY COUNT(s.ip) DESC")
     Collection<StatsResponseDTO> getStatisticsByUri(LocalDateTime start, LocalDateTime end, List<String> uris);
 
-    @Query("SELECT new ru.practicum.common.StatsResponseDTO(s.appName, s.uri, COUNT(s.ip)) " +
+    @Query("SELECT new ru.practicum.common.StatsResponseDTO(s.appName, s.uri, COUNT(DISTINCT s.ip)) " +
             "FROM Statistics AS s " +
             "WHERE s.timestamp BETWEEN ?1 AND ?2 " +
             "AND s.uri IN (?3) " +
