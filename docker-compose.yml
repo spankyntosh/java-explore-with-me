@@ -8,19 +8,19 @@ services:
     depends_on:
       - stats-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://statistics-db:5432/statistics
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
 
-  stats-db:
+  statistics-db:
     image: postgres:14-alpine
     container_name: statistics-db
     ports:
       - "6541:5432"
     volumes:
-      - stats-db:/var/lib/postgresql/data
+      - statistics-db:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=stats
+      - POSTGRES_DB=statistics
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
 
