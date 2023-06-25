@@ -6,5 +6,4 @@ CREATE TABLE IF NOT EXISTS statistics (
     user_ip VARCHAR(15) NOT NULL,
     uri VARCHAR(255) NOT NULL,
     created TIMESTAMP NOT NULL
-
 );

@@ -2,7 +2,6 @@ package ru.practicum.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 import ru.practicum.common.StatsResponseDTO;
 import ru.practicum.model.Statistics;
 
@@ -10,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-@Repository
 public interface StatisticsRepository extends JpaRepository<Statistics, Integer> {
 
 
