@@ -1,6 +1,6 @@
 version: '3.1'
 services:
-  statistics-server:
+  stats-server:
     build: ./statistics-service/statistics-server
     container_name: statistics-server
     ports:
@@ -12,17 +12,17 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
 
-  statistics-db:
+  stats-db:
     image: postgres:14-alpine
     container_name: statistics-db
     ports:
       - "6541:5432"
     volumes:
-      - statistics-db:/var/lib/postgresql/data
+      - stats-db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=statistics
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
 
 volumes:
-  statistics-db:
+  stats-db:
