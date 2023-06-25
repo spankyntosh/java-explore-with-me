@@ -46,11 +46,13 @@ public class StatisticsClient extends BaseClient {
         parameters.put("end", end);
         if (nonNull(uris)) {
             parameters.put("uris", uris);
+            return get("/stats?start={start}&end={end}&uris={uris}", parameters);
         }
         if (nonNull(unique)) {
             parameters.put("unique", unique);
+            return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
         }
-        return get("/stats", parameters);
+        return get("/stats?start={start}&end", parameters);
     }
 
 }
