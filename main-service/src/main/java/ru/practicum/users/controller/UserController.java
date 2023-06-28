@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.users.model.User;
+import ru.practicum.users.service.UserService;
 import ru.practicum.users.service.UserServiceImpl;
 
 import javax.validation.Valid;
@@ -20,7 +21,7 @@ import java.util.List;
 @Slf4j
 public class UserController {
 
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     @Autowired
     public UserController(UserServiceImpl userService) {
