@@ -20,7 +20,7 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
 
     @Query("select event from Event event " +
             "where event.id IN (:ids)")
-    Collection<Event> findByIds(@Param("ids") List<Integer> ids);
+    Collection<Event> findByIds(@Param("ids") Collection<Integer> ids);
 
     @Query("SELECT e " +
             "FROM Event AS e " +
