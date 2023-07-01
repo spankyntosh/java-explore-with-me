@@ -30,7 +30,7 @@ public class StatisticsClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> saveHit(String path, HitRequestDTO hitRequestDTO) {
+    public ResponseEntity<Object> saveHit(HitRequestDTO hitRequestDTO) {
         return post("/hit", hitRequestDTO);
     }
 

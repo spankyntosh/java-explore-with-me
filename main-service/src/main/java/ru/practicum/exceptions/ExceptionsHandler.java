@@ -71,4 +71,16 @@ public class ExceptionsHandler {
                 .timestamp(LocalDateTime.now().format(formatter))
                 .build();
     }
+
+    @ExceptionHandler(ForbiddenException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleForbiddenException(final ForbiddenException e) {
+        log.error(e.toString());
+        return ErrorResponse.builder()
+                .status(HttpStatus.CONFLICT.name())
+                .reason("For the requested operation the conditions are not met.")
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now().format(formatter))
+                .build();
+    }
 }

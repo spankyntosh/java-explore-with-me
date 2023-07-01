@@ -10,7 +10,6 @@ import ru.practicum.users.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
@@ -42,8 +41,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Integer userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Пользователь с таким id не существует"));
+        if (!userRepository.existsById(userId)) {
+            throw new EntityNotFoundException("Пользователь с таким id не существует");
+        }
         userRepository.deleteById(userId);
     }
 }
