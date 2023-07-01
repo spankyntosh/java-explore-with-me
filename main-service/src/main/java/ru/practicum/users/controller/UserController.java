@@ -7,7 +7,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.users.dto.NewUserRequest;
 import ru.practicum.users.dto.UserDto;
-import ru.practicum.users.model.User;
 import ru.practicum.users.service.UserService;
 import ru.practicum.users.service.UserServiceImpl;
 
@@ -39,7 +38,7 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Collection<User> getUsers(@RequestParam(defaultValue = "0", required = false) @PositiveOrZero Integer from,
+    public Collection<UserDto> getUsers(@RequestParam(defaultValue = "0", required = false) @PositiveOrZero Integer from,
                                      @RequestParam(defaultValue = "10", required = false) @Positive Integer size,
                                      @RequestParam(required = false) List<Integer> ids) {
         log.info("Пришёл запрос на получение пользователей. from - {}, size - {}, ids - {}", from, size, ids);

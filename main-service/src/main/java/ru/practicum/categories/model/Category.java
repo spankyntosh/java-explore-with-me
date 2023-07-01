@@ -1,15 +1,12 @@
 package ru.practicum.categories.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder(toBuilder = true)
 @Getter
 @Setter
 @Entity
@@ -18,6 +15,6 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotBlank
+    @Column(name = "name")
     private String name;
 }

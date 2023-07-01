@@ -1,20 +1,21 @@
 package ru.practicum.categories.service;
 
-import ru.practicum.categories.model.Category;
+import ru.practicum.categories.dto.CategoryDto;
+import ru.practicum.categories.dto.NewCategoryDto;
 
 import java.util.Collection;
 
 public interface CategoriesService {
 
     // Администраторская часть
-    Category createCategory(Category newCategory);
+    CategoryDto createCategory(NewCategoryDto newCategory);
 
-    Category patchCategory(Integer categoryId, Category updatedCategory);
+    CategoryDto patchCategory(Integer categoryId, CategoryDto updatedCategory);
 
     void deleteCategory(Integer categoryId);
 
     // Публичная часть
-    Collection<Category> getCategories(Integer from, Integer size);
+    Collection<CategoryDto> getCategories(Integer from, Integer size);
 
-    Category getCategory(Integer categoryId);
+    CategoryDto getCategory(Integer categoryId);
 }

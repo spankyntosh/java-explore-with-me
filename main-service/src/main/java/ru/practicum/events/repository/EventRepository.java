@@ -61,4 +61,6 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
                                     @Param("rangeStart") LocalDateTime rangeStart,
                                     @Param("rangeEnd") LocalDateTime rangeEnd,
                                     PageRequest request);
+
+    List<Event> findByCategory(Integer categoryId);
 }

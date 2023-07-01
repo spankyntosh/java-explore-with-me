@@ -5,7 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.categories.model.Category;
+import ru.practicum.categories.dto.CategoryDto;
+import ru.practicum.categories.dto.NewCategoryDto;
 import ru.practicum.categories.service.CategoriesService;
 
 import javax.validation.Valid;
@@ -27,14 +28,14 @@ public class CategoryController {
 
     @PostMapping("/admin/categories")
     @ResponseStatus(HttpStatus.CREATED)
-    public Category createCategory(@Valid @RequestBody Category newCategory) {
+    public CategoryDto createCategory(@Valid @RequestBody NewCategoryDto newCategory) {
         log.info("Пришёл запрос на создание новой категории. {}", newCategory);
         return categoriesService.createCategory(newCategory);
     }
 
     @PatchMapping("/admin/categories/{catId}")
     @ResponseStatus(HttpStatus.OK)
-    public Category patchCategory(@PathVariable Integer catId, @Valid @RequestBody Category updatedCategory) {
+    public CategoryDto patchCategory(@PathVariable Integer catId, @Valid @RequestBody CategoryDto updatedCategory) {
         log.info("Пришёл запрос на обновление категории с id {}", catId);
         return categoriesService.patchCategory(catId, updatedCategory);
     }
@@ -47,7 +48,7 @@ public class CategoryController {
 
     @GetMapping("/categories")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<Category> getCategories(@RequestParam(required = false, defaultValue = "0") @PositiveOrZero Integer from,
+    public Collection<CategoryDto> getCategories(@RequestParam(required = false, defaultValue = "0") @PositiveOrZero Integer from,
                                               @RequestParam(required = false, defaultValue = "10") @Positive Integer size) {
         log.info("Пришёл запрос на получение категорий. from - {}, size - {}", from, size);
         return categoriesService.getCategories(from, size);
@@ -55,7 +56,7 @@ public class CategoryController {
 
     @GetMapping("/categories/{catId}")
     @ResponseStatus(HttpStatus.OK)
-    public Category getCategoryById(@PathVariable Integer catId) {
+    public CategoryDto getCategoryById(@PathVariable Integer catId) {
         log.info("Пришёл запрос на получение категории с id {}", catId);
         return categoriesService.getCategory(catId);
     }

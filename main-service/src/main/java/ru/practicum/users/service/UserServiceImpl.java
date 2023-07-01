@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import ru.practicum.exceptions.EntityNotFoundException;
 import ru.practicum.users.dto.NewUserRequest;
 import ru.practicum.users.dto.UserDto;
-import ru.practicum.users.model.User;
 import ru.practicum.users.repository.UserRepository;
 
 import java.util.ArrayList;
