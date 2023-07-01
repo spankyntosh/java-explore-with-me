@@ -7,7 +7,6 @@ import org.springframework.data.repository.query.Param;
 import ru.practicum.events.enums.EventState;
 import ru.practicum.events.model.Event;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;

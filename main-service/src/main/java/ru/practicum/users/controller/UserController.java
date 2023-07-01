@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.users.dto.NewUserRequest;
+import ru.practicum.users.dto.UserDto;
 import ru.practicum.users.model.User;
 import ru.practicum.users.service.UserService;
 import ru.practicum.users.service.UserServiceImpl;
@@ -30,7 +32,7 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public User createUser(@Valid @RequestBody User newUser) {
+    public UserDto createUser(@Valid @RequestBody NewUserRequest newUser) {
         log.info("Пришёл запрос на создание пользователя {}", newUser);
         return userService.createUser(newUser);
     }

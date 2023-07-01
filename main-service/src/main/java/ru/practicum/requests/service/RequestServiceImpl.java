@@ -1,13 +1,13 @@
 package ru.practicum.requests.service;
 
 import org.springframework.stereotype.Service;
-import ru.practicum.requests.dto.ParticipationRequestDto;
 import ru.practicum.events.enums.EventState;
 import ru.practicum.events.enums.RequestStatus;
 import ru.practicum.events.model.Event;
 import ru.practicum.events.repository.EventRepository;
 import ru.practicum.exceptions.EntityNotFoundException;
 import ru.practicum.exceptions.ForbiddenException;
+import ru.practicum.requests.dto.ParticipationRequestDto;
 import ru.practicum.requests.model.Request;
 import ru.practicum.requests.repository.RequestRepository;
 import ru.practicum.users.model.User;

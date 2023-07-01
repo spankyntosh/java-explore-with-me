@@ -5,7 +5,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.categories.model.Category;
 import ru.practicum.categories.repository.CategoriesRepository;
-import ru.practicum.common.HitRequestDTO;
 import ru.practicum.common.StatsResponseDTO;
 import ru.practicum.events.dto.*;
 import ru.practicum.events.enums.EventState;

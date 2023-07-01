@@ -6,11 +6,9 @@ import ru.practicum.events.dto.EventShortDto;
 import ru.practicum.events.dto.NewEventDto;
 import ru.practicum.events.enums.EventState;
 import ru.practicum.events.model.Event;
-import ru.practicum.users.dto.UserShortDto;
 import ru.practicum.users.model.User;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 
 import static ru.practicum.categories.mapper.CategoryMapper.modelToCategoryDto;
 import static ru.practicum.users.mapper.UserMapper.modelToUserShortDto;

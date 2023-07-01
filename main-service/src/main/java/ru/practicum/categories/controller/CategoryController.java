@@ -7,7 +7,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.categories.model.Category;
 import ru.practicum.categories.service.CategoriesService;
-import ru.practicum.categories.service.CategoriesServiceImpl;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;

@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.exceptions.EntityNotFoundException;
+import ru.practicum.users.dto.NewUserRequest;
+import ru.practicum.users.dto.UserDto;
 import ru.practicum.users.model.User;
 import ru.practicum.users.repository.UserRepository;
 
@@ -12,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static java.util.Objects.isNull;
+import static ru.practicum.users.mapper.UserMapper.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -25,17 +28,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(User user) {
-        return userRepository.save(user);
+    public UserDto createUser(NewUserRequest user) {
+        return modelToUserDto(userRepository.save(newUserRequestToModel(user)));
     }
 
     @Override
-    public Collection<User> getUsers(Integer from, Integer size, List<Integer> ids) {
+    public Collection<UserDto> getUsers(Integer from, Integer size, List<Integer> ids) {
         PageRequest request = PageRequest.of(from / size, size);
         if (isNull(ids) || ids.isEmpty()) {
-            return userRepository.findAll(request).toList();
+            return modelToUserDtos(userRepository.findAll(request).toList());
         } else {
-         return new ArrayList<>(userRepository.findAllByIdIn(ids, request));
+         return modelToUserDtos(new ArrayList<>(userRepository.findAllByIdIn(ids)));
         }
     }
 
