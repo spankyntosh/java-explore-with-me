@@ -43,7 +43,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - main-db:/var/lib/postgresql/data
+      - ewm-db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=mainservice
       - POSTGRES_USER=root
