@@ -6,7 +6,6 @@ import ru.practicum.events.enums.EventStateAction;
 import ru.practicum.events.model.Location;
 
 import javax.validation.constraints.FutureOrPresent;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
