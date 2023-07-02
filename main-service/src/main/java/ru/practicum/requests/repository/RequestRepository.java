@@ -31,6 +31,7 @@ public interface RequestRepository extends JpaRepository<Request, Integer> {
     @Query("SELECT new ru.practicum.requests.model.EventConfirmedRequests(r.event.id, count(r.id)) " +
             "FROM Request AS r " +
             "WHERE r.event.id IN ?1 " +
+            "AND r.status = 'CONFIRMED' " +
             "GROUP BY r.event.id")
     List<EventConfirmedRequests> getEventsConfirmedRequests(List<Integer> eventIds);
 }

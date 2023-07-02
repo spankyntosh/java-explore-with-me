@@ -43,6 +43,7 @@ public class EventServiceImpl implements EventService {
     private final LocationRepository locationRepository;
     private final RequestRepository requestRepository;
     private final StatisticsService statisticsService;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
     public EventServiceImpl(EventRepository eventRepository,
@@ -83,7 +84,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto privateCreateEvent(int userId, NewEventDto newEventDto) {
-        if (!newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2L))) {
+        if (!newEventDto.getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
             throw new ForbiddenException("Событие не может начинаться менее чем за 2 часа от текущего времени");
         }
         User eventCreator = userRepository.findById(userId)
@@ -319,7 +320,7 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException("Событие с таким id не существует"));
 
-        if (event.getState().equals(EventState.PUBLISHED)) {
+        if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new EntityNotFoundException("Событие с таким id не опубликовано.");
         }
         statisticsService.addHit(HtiMapper.toHitRequestDTO("main-service", servletRequest));
@@ -350,8 +351,8 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventFullDto adminPatchEvent(int eventId, UpdateEventAdminRequest adminUpdateRequest) {
         if (nonNull(adminUpdateRequest.getEventDate())) {
-            if (!adminUpdateRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(1L))) {
-                throw new ForbiddenException("Событие не может начинаться менее чем за 2 часа от текущего времени");
+            if (!adminUpdateRequest.getEventDate().isAfter(LocalDateTime.now().plusHours(1L))) {
+                throw new ForbiddenException("Событие не может начинаться менее чем за 1 час от текущего времени");
             }
         }
         Event updatedEvent = eventRepository.findById(eventId)
@@ -415,53 +416,69 @@ public class EventServiceImpl implements EventService {
     private int getViews(Event event) {
         List<String> uris = List.of("events/" + event.getId());
         List<StatsResponseDTO> responseFromStatsService = statisticsService
-                .getStatistics(event.getPublishedOn(), LocalDateTime.now(), uris, false);
-        return (int) responseFromStatsService.get(0).getHits();
+                .getStatistics(event.getPublishedOn().format(formatter), LocalDateTime.now().format(formatter), uris, false);
+        if (responseFromStatsService.isEmpty()) {
+            return 0;
+        } else {
+            return (int) responseFromStatsService.get(0).getHits();
+        }
     }
 
     private Map<Integer, Integer> getViews(List<Event> events) {
+        // Создаем отображение
         Map<Integer, Integer> eventIdsViewsMap = new HashMap<>();
+        // Предварительно заполняем нулями количество просмотров для каждого события
+        events.forEach(event -> eventIdsViewsMap.put(event.getId(), 0));
+        // Формируем список uri для отправки в сервис статистики
         List<String> uris = events.stream()
                 .map(Event::getId)
                 .map(eventId -> String.format("/events/%d", eventId))
                 .collect(toList());
-        LocalDateTime earliestDateTime = events.stream()
+        // Ищем самую раннюю дату опубликованного события
+        Optional<LocalDateTime> earliestDateTime = events.stream()
                 .map(Event::getPublishedOn)
                 .filter(Objects::nonNull)
-                .min(LocalDateTime::compareTo)
-                .get();
-        List<StatsResponseDTO> responseFromStatsService = statisticsService
-                .getStatistics(earliestDateTime, LocalDateTime.now(), uris, false);
-        responseFromStatsService.stream().forEach(eventStats -> {
-            Integer eventId = Integer.parseInt(eventStats.getUri().split("/")[2]);
-            eventIdsViewsMap.put(eventId, (int) eventStats.getHits());
-        });
+                .min(LocalDateTime::compareTo);
+        // Если самая ранняя дата присутствует, то отправляем запрос в сервис статистики
+        if (earliestDateTime.isPresent()) {
+            List<StatsResponseDTO> responseFromStatsService = statisticsService
+                    .getStatistics(earliestDateTime.get().format(formatter), LocalDateTime.now().format(formatter), uris, false);
+            responseFromStatsService.stream().forEach(eventStats -> {
+                Integer eventId = Integer.parseInt(eventStats.getUri().split("/")[2]);
+                eventIdsViewsMap.put(eventId, (int) eventStats.getHits());
+            });
+        }
+        // Возвращаем отображение
         return eventIdsViewsMap;
     }
 
     private List<EventShortDto> getPublishedEventShortDtos(List<Event> events) {
-        Map<Integer, Integer> views = getViews(events);
-        Map<Integer, Integer> confirmedRequests = new HashMap<>();
+        Map<Integer, Integer> eventIdViewsMap = getViews(events);
+        Map<Integer, Integer> eventIdConfirmedRequestsMap = new HashMap<>();
+        // Предварительно заполняем нулями количество подтверждённых запросов для каждого события
+        events.forEach(event -> eventIdConfirmedRequestsMap.put(event.getId(), 0));
         List<EventConfirmedRequests> eventConfirmedRequests = requestRepository
                 .getEventsConfirmedRequests(events.stream().map(Event::getId).collect(toList()));
         for (EventConfirmedRequests confRequest : eventConfirmedRequests) {
-            confirmedRequests.put(confRequest.getEventId(), confRequest.getConfirmedRequests());
+            eventIdConfirmedRequestsMap.put(confRequest.getEventId(), confRequest.getConfirmedRequests());
         }
         return events.stream()
-                .map(event -> modelToEventShortDto(event, confirmedRequests.get(event.getId()), views.get(event.getId())))
+                .map(event -> modelToEventShortDto(event, eventIdConfirmedRequestsMap.get(event.getId()), eventIdViewsMap.get(event.getId())))
                 .collect(toList());
     }
 
     private List<EventFullDto> getEventFullDtos(List<Event> events) {
-        Map<Integer, Integer> views = getViews(events);
-        Map<Integer, Integer> confirmedRequests = new HashMap<>();
+        Map<Integer, Integer> eventIdViewsMap = getViews(events);
+        Map<Integer, Integer> eventIdConfirmedRequestsMap = new HashMap<>();
+        // Предварительно заполняем нулями количество подтверждённых запросов для каждого события
+        events.forEach(event -> eventIdConfirmedRequestsMap.put(event.getId(), 0));
         List<EventConfirmedRequests> eventConfirmedRequests = requestRepository
                 .getEventsConfirmedRequests(events.stream().map(Event::getId).collect(toList()));
         for (EventConfirmedRequests confRequest : eventConfirmedRequests) {
-            confirmedRequests.put(confRequest.getEventId(), confRequest.getConfirmedRequests());
+            eventIdConfirmedRequestsMap.put(confRequest.getEventId(), confRequest.getConfirmedRequests());
         }
         return events.stream()
-                .map(event -> modelToEventFullDto(event, confirmedRequests.get(event.getId()), views.get(event.getId())))
+                .map(event -> modelToEventFullDto(event, eventIdConfirmedRequestsMap.get(event.getId()), eventIdViewsMap.get(event.getId())))
                 .collect(toList());
     }
 

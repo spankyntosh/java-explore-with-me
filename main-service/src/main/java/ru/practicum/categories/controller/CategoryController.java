@@ -44,6 +44,7 @@ public class CategoryController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable Integer catId) {
         log.info("Пришёл запрос на удаление категории с id {}", catId);
+        categoriesService.deleteCategory(catId);
     }
 
     @GetMapping("/categories")

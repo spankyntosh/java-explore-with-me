@@ -10,14 +10,14 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "events")
+@Table(name = "locations")
 public class Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
-    @Column(nullable = false)
+    @Column(name = "lat")
     Float lat;
-    @Column(nullable = false)
+    @Column(name = "lon")
     Float lon;
 }

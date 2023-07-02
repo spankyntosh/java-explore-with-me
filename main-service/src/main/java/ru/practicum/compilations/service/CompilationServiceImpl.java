@@ -18,6 +18,7 @@ import ru.practicum.requests.repository.RequestRepository;
 import ru.practicum.statistics.StatisticsService;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,7 @@ public class CompilationServiceImpl implements CompilationService {
     private final RequestRepository requestRepository;
     private final EventRepository eventRepository;
     private final StatisticsService statisticsService;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
     public CompilationServiceImpl(CompilationRepository compilationRepository,
@@ -116,35 +118,45 @@ public class CompilationServiceImpl implements CompilationService {
 
     // Приватные методы класса
     private Map<Integer, Integer> getViews(List<Event> events) {
+        // Создаем отображение
         Map<Integer, Integer> eventIdsViewsMap = new HashMap<>();
+        // Предварительно заполняем нулями количество просмотров для каждого события
+        events.forEach(event -> eventIdsViewsMap.put(event.getId(), 0));
+        // Формируем список uri для отправки в сервис статистики
         List<String> uris = events.stream()
                 .map(Event::getId)
                 .map(eventId -> String.format("/events/%d", eventId))
                 .collect(toList());
-        LocalDateTime earliestDateTime = events.stream()
+        // Ищем самую раннюю дату опубликованного события
+        Optional<LocalDateTime> earliestDateTime = events.stream()
                 .map(Event::getPublishedOn)
                 .filter(Objects::nonNull)
-                .min(LocalDateTime::compareTo)
-                .get();
-        List<StatsResponseDTO> responseFromStatsService = statisticsService
-                .getStatistics(earliestDateTime, LocalDateTime.now(), uris, false);
-        responseFromStatsService.stream().forEach(eventStats -> {
-            Integer eventId = Integer.parseInt(eventStats.getUri().split("/")[2]);
-            eventIdsViewsMap.put(eventId, (int) eventStats.getHits());
-        });
+                .min(LocalDateTime::compareTo);
+        // Если самая ранняя дата присутствует, то отправляем запрос в сервис статистики
+        if (earliestDateTime.isPresent()) {
+            List<StatsResponseDTO> responseFromStatsService = statisticsService
+                    .getStatistics(earliestDateTime.get().format(formatter), LocalDateTime.now().format(formatter), uris, false);
+            responseFromStatsService.stream().forEach(eventStats -> {
+                Integer eventId = Integer.parseInt(eventStats.getUri().split("/")[2]);
+                eventIdsViewsMap.put(eventId, (int) eventStats.getHits());
+            });
+        }
+        // Возвращаем отображение
         return eventIdsViewsMap;
     }
 
     private List<EventShortDto> getEventShortDtos(List<Event> events) {
-        Map<Integer, Integer> views = getViews(events);
-        Map<Integer, Integer> confirmedRequests = new HashMap<>();
+        Map<Integer, Integer> eventIdsViewsMap = getViews(events);
+        Map<Integer, Integer> eventIdConfirmedRequestsMap = new HashMap<>();
+        // Предварительно заполняем нулями количество подтверждённых запросов для каждого события
+        events.forEach(event -> eventIdConfirmedRequestsMap.put(event.getId(), 0));
         List<EventConfirmedRequests> eventConfirmedRequests = requestRepository
                 .getEventsConfirmedRequests(events.stream().map(Event::getId).collect(toList()));
         for (EventConfirmedRequests confRequest : eventConfirmedRequests) {
-            confirmedRequests.put(confRequest.getEventId(), confRequest.getConfirmedRequests());
+            eventIdConfirmedRequestsMap.put(confRequest.getEventId(), confRequest.getConfirmedRequests());
         }
         return events.stream()
-                .map(event -> modelToEventShortDto(event, confirmedRequests.get(event.getId()), views.get(event.getId())))
+                .map(event -> modelToEventShortDto(event, eventIdConfirmedRequestsMap.get(event.getId()), eventIdsViewsMap.get(event.getId())))
                 .collect(toList());
     }
 }

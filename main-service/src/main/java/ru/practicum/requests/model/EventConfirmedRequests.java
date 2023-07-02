@@ -12,4 +12,9 @@ import lombok.Setter;
 public class EventConfirmedRequests {
     private Integer eventId;
     private Integer confirmedRequests;
+
+    public EventConfirmedRequests(Integer eventId, Long confirmedRequests) {
+        this.eventId = eventId;
+        this.confirmedRequests = Integer.parseInt(confirmedRequests.toString());
+    }
 }

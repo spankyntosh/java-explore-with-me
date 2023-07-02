@@ -11,6 +11,7 @@ import ru.practicum.common.HitRequestDTO;
 import ru.practicum.common.StatsResponseDTO;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -29,12 +30,15 @@ public class StatisticsService {
         statisticsClient.saveHit(hitRequestDTO);
     }
 
-    public List<StatsResponseDTO> getStatistics(LocalDateTime start,
-                                                LocalDateTime end,
+    public List<StatsResponseDTO> getStatistics(String start,
+                                                String end,
                                                 List<String> uris,
                                                 Boolean unique) {
         log.info("Получение статистики с параметрами: start {}, end {}, uris {}, unique {}", start, end, uris, unique);
-        ResponseEntity<Object> statsServiceResponse = statisticsClient.getStatistics(start, end, uris, unique);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime startTime = LocalDateTime.parse(start, formatter);
+        LocalDateTime endTime = LocalDateTime.parse(end, formatter);
+        ResponseEntity<Object> statsServiceResponse = statisticsClient.getStatistics(startTime, endTime, uris, unique);
         List<StatsResponseDTO> response = new ObjectMapper().convertValue(statsServiceResponse.getBody(), new TypeReference<>() {});
         return  response;
     }

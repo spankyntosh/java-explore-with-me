@@ -39,17 +39,17 @@ public class CategoriesServiceImpl implements CategoriesService {
         Category categoryInDB = categoriesRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Категория с id %d не найдена", categoryId)));
         categoryInDB.setName(updatedCategory.getName());
-        return modelToCategoryDto(categoriesRepository.save(categoryDtoToModel(updatedCategory)));
+        return modelToCategoryDto(categoriesRepository.save(categoryInDB));
     }
 
     @Override
     public void deleteCategory(Integer categoryId) {
-        categoriesRepository.findById(categoryId)
+        Category categoryForDeletion = categoriesRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Категория с id %d не найдена", categoryId)));
-        if (eventRepository.findByCategory(categoryId).size() > 0) {
+        if (eventRepository.findByCategoryId(categoryId).size() > 0) {
             throw new ForbiddenException("Невозможно удалить категорию с привязанным событием");
         }
-        categoriesRepository.deleteById(categoryId);
+        categoriesRepository.delete(categoryForDeletion);
     }
 
     // Public: Категории

@@ -49,7 +49,7 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
     @Query("SELECT e " +
             "FROM Event AS e " +
             "WHERE " +
-            "((:states IS NULL OR e.state IN (:states)) " +
+            "(:states IS NULL OR e.state IN (:states)) " +
             "AND (:users IS NULL OR e.initiator.id IN (:users)) " +
             "AND (:categories IS NULL OR e.category.id IN (:categories)) " +
             "AND (CAST(:rangeStart AS date) IS NULL OR e.eventDate >= :rangeStart) " +
@@ -62,5 +62,5 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
                                     @Param("rangeEnd") LocalDateTime rangeEnd,
                                     PageRequest request);
 
-    List<Event> findByCategory(Integer categoryId);
+    List<Event> findByCategoryId(Integer categoryId);
 }

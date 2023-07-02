@@ -5,7 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -13,11 +15,12 @@ import javax.validation.constraints.NotNull;
 @Builder(toBuilder = true)
 public class HitRequestDTO {
     private Integer id;
-    @NotNull
+    @NotBlank
     private String app;
-    @NotNull
+    @NotBlank
     private String uri;
-    @NotNull
+    @NotBlank
     private String ip;
+    @NotBlank
     private String timestamp;
 }

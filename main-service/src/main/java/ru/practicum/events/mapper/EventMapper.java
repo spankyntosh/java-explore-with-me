@@ -1,5 +1,6 @@
 package ru.practicum.events.mapper;
 
+import ru.practicum.categories.mapper.CategoryMapper;
 import ru.practicum.categories.model.Category;
 import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.events.dto.EventShortDto;
@@ -50,6 +51,7 @@ public class EventMapper {
     public static EventFullDto modelToEventFullDto(Event event, int confirmedRequests, int views) {
         return EventFullDto.builder()
                 .annotation(event.getAnnotation())
+                .category(CategoryMapper.modelToCategoryDto(event.getCategory()))
                 .confirmedRequests(confirmedRequests)
                 .createdOn(event.getCreatedOn())
                 .description(event.getDescription())

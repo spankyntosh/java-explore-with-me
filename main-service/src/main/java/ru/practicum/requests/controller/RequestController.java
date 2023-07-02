@@ -9,6 +9,7 @@ import ru.practicum.requests.dto.ParticipationRequestDto;
 import ru.practicum.requests.service.RequestService;
 
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 
 @RestController
@@ -34,7 +35,7 @@ public class RequestController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     ParticipationRequestDto createRequest(@PathVariable @Positive int userId,
-                                          @RequestParam @Positive int eventId) {
+                                          @RequestParam @PositiveOrZero int eventId) {
         log.info("Пришёл запрос с заявкой на участие в событии с id {} от пользователя с id {}", eventId, userId);
         return requestService.createRequest(userId, eventId);
     }

@@ -20,34 +20,34 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name = "")
+    @Column(name = "annotation")
     private String annotation;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
-    @Column(name = "")
+    @Column(name = "created_on")
     private LocalDateTime createdOn;
-    @Column(name = "")
+    @Column(name = "description")
     private String description;
-    @Column(name = "")
+    @Column(name = "event_date")
     private LocalDateTime eventDate;
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "initiator", referencedColumnName = "id")
     private User initiator;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "location_id", referencedColumnName = "id")
     private Location location;
-    @Column(name = "")
+    @Column(name = "paid")
     private Boolean paid;
-    @Column(name = "")
+    @Column(name = "participant_limit")
     private Integer participantLimit;
-    @Column(name = "")
+    @Column(name = "published_on")
     private LocalDateTime publishedOn;
-    @Column(name = "")
+    @Column(name = "request_moderation")
     private Boolean requestModeration;
-    @Column(name = "")
+    @Column(name = "state")
     @Enumerated(EnumType.STRING)
     private EventState state;
-    @Column(name = "")
+    @Column(name = "title")
     private String title;
 }
