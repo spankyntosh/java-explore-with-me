@@ -3,6 +3,8 @@ package ru.practicum.events.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ru.practicum.categories.model.Category;
 import ru.practicum.categories.repository.CategoriesRepository;
 import ru.practicum.common.StatsResponseDTO;
@@ -13,6 +15,7 @@ import ru.practicum.events.model.Event;
 import ru.practicum.events.model.Location;
 import ru.practicum.events.repository.EventRepository;
 import ru.practicum.events.repository.LocationRepository;
+import ru.practicum.exceptions.BadRequestException;
 import ru.practicum.exceptions.EntityNotFoundException;
 import ru.practicum.exceptions.ForbiddenException;
 import ru.practicum.requests.dto.ParticipationRequestDto;
@@ -286,6 +289,11 @@ public class EventServiceImpl implements EventService {
         if (text == null) {
             text = "";
         }
+        if (nonNull(start) && nonNull(end)) {
+            if (end.isBefore(start)) {
+                throw new BadRequestException("время конца интервала должно быть позже времени начала");
+            }
+        }
         PageRequest request = PageRequest.of(from / size, size);
 
         List<Event> events = eventRepository.findByParamsOrderByDate(text.toLowerCase(),
@@ -301,7 +309,7 @@ public class EventServiceImpl implements EventService {
         Map<Integer, Integer> eventsParticipantLimit = new HashMap<>();
         events.forEach(event -> eventsParticipantLimit.put(event.getId(), event.getParticipantLimit()));
 
-        if (onlyAvailable) {
+        if (nonNull(onlyAvailable) && onlyAvailable) {
             eventShortDtos = eventShortDtos.stream()
                     .filter(eventShortDto -> eventShortDto.getConfirmedRequests() < eventsParticipantLimit.get(eventShortDto.getId()))
                     .collect(toList());

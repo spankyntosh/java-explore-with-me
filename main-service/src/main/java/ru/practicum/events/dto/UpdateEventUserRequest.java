@@ -1,5 +1,6 @@
 package ru.practicum.events.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import ru.practicum.events.enums.EventStateAction;
 import ru.practicum.events.model.Location;
@@ -23,6 +24,7 @@ public class UpdateEventUserRequest {
     @Size(min = 20, max = 7000, message = "текст описания события должен быть больше 20 и меньше 7000 символов")
     private String description;
     @FutureOrPresent(message = "дата события не должна быть в прошлом")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     private Location location;
     private Boolean paid;

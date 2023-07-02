@@ -35,7 +35,7 @@ public class ExceptionsHandler {
                 .build();
     }
 
-    @ExceptionHandler({MethodArgumentTypeMismatchException.class, ConstraintViolationException.class})
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class, ConstraintViolationException.class, BadRequestException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(RuntimeException e) {
         log.warn(e.getMessage());

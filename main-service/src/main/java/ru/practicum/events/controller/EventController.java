@@ -94,7 +94,9 @@ public class EventController {
                                         @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int from,
                                         @RequestParam(required = false, defaultValue = "10") @Positive int size,
                                         HttpServletRequest servletRequest) {
-            log.info("Пришёл публичный запрос на получение событий");
+            log.info("Пришёл публичный запрос на получение событий. text - {}, categories - {}, paid - {}, " +
+                    "rangeStart - {}, rangeEnd - {}, onlyAvailable - {}, sort - {}, from - {}, size - {}",
+                    text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
             return eventService.publicGetEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size, servletRequest);
     }
 
