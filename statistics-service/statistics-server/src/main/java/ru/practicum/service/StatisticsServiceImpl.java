@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.common.HitRequestDTO;
 import ru.practicum.common.StatsResponseDTO;
+import ru.practicum.exception.BadRequestException;
 import ru.practicum.mapper.HitMapper;
 import ru.practicum.repository.StatisticsRepository;
 
@@ -30,6 +31,11 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public Collection<StatsResponseDTO> getStatistics(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+
+        if (end.isBefore(start)) {
+            throw new BadRequestException("начало не может быть раньше конца");
+        }
+
         if (isNull(uris) || uris.isEmpty()) {
             if (unique) {
                 return statisticsRepository.getAllStatisticsWithDistinctIp(start, end);
