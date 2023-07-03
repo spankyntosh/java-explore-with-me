@@ -26,9 +26,9 @@ public class NewEventDto {
     private LocalDateTime eventDate;
     @NotNull
     private Location location;
-    private boolean paid;
+    private boolean paid = false;
     @PositiveOrZero
-    private int participantLimit;
+    private int participantLimit = 0;
     private boolean requestModeration = true;
     @NotBlank
     @Size(min = 3, max = 120, message = "текст заголовка должен быть больше 3 и меньше 120 символов")

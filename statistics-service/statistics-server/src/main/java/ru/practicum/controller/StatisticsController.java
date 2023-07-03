@@ -28,7 +28,7 @@ public class StatisticsController {
 
     @PostMapping("/hit")
     public HitRequestDTO addHit(@Valid @RequestBody HitRequestDTO hitRequestDTO) {
-        log.info("Пришёл запрос на сохранение информации по обращению к эндпоинту");
+        log.info("Пришёл запрос на сохранение информации по обращению к эндпоинту. {}", hitRequestDTO);
         return statisticsService.addHit(hitRequestDTO);
     }
 
@@ -37,7 +37,11 @@ public class StatisticsController {
                                                       @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                                       @RequestParam(required = false) List<String> uris,
                                                       @RequestParam(required = false, defaultValue = "false") Boolean unique) {
-        log.info("Пришёл запрос на получение статистики по посещениям");
-        return statisticsService.getStatistics(start, end, uris, unique);
+        log.info("Пришёл запрос на получение статистики по посещениям. uris - {}, start - {}, end - {}", uris, start, end);
+        Collection<StatsResponseDTO> response = statisticsService.getStatistics(start, end, uris, unique);
+        System.out.println("Ответ вопрошателю_______________");
+        System.out.println(response);
+
+        return response;
     }
 }

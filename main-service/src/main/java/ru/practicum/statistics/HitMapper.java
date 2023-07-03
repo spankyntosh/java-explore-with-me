@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class HtiMapper {
+public class HitMapper {
 
     public static HitRequestDTO toHitRequestDTO(String appName, HttpServletRequest servletRequest) {
         return HitRequestDTO.builder()

@@ -26,7 +26,7 @@ public class StatisticsService {
     }
 
     public void addHit(HitRequestDTO hitRequestDTO) {
-        log.info("Добавление нового просмотра события");
+        log.info("Добавление нового просмотра события. {}", hitRequestDTO);
         statisticsClient.saveHit(hitRequestDTO);
     }
 
@@ -39,7 +39,9 @@ public class StatisticsService {
         LocalDateTime startTime = LocalDateTime.parse(start, formatter);
         LocalDateTime endTime = LocalDateTime.parse(end, formatter);
         ResponseEntity<Object> statsServiceResponse = statisticsClient.getStatistics(startTime, endTime, uris, unique);
+        System.out.println(statsServiceResponse.getBody().toString());
         List<StatsResponseDTO> response = new ObjectMapper().convertValue(statsServiceResponse.getBody(), new TypeReference<>() {});
+        System.out.println(response);
         return  response;
     }
 }

@@ -44,8 +44,16 @@ public class StatisticsClient extends BaseClient {
         parameters.put("start", start.format(formatter));
         parameters.put("end", end.format(formatter));
         if (nonNull(uris)) {
-            parameters.put("uris", uris);
-            return get("/stats?start={start}&end={end}&uris={uris}", parameters);
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < uris.size(); i++) {
+                if (i == uris.size() - 1) {
+                    builder.append(uris.get(i));
+                } else {
+                    builder.append(uris.get(i) + ",");
+                }
+            }
+            parameters.put("uris", builder.toString());
+            return get("/stats?start={start}&end={end}&uris={uris}&unique=true", parameters);
         }
         if (nonNull(unique)) {
             parameters.put("unique", unique);

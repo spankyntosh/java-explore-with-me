@@ -20,7 +20,7 @@ import ru.practicum.requests.dto.ParticipationRequestDto;
 import ru.practicum.requests.model.EventConfirmedRequests;
 import ru.practicum.requests.model.Request;
 import ru.practicum.requests.repository.RequestRepository;
-import ru.practicum.statistics.HtiMapper;
+import ru.practicum.statistics.HitMapper;
 import ru.practicum.statistics.StatisticsService;
 import ru.practicum.users.model.User;
 import ru.practicum.users.repository.UserRepository;
@@ -316,7 +316,7 @@ public class EventServiceImpl implements EventService {
         if (nonNull(sort) && sort.equalsIgnoreCase("VIEWS")) {
             eventShortDtos.sort(Comparator.comparing(EventShortDto::getViews));
         }
-        statisticsService.addHit(HtiMapper.toHitRequestDTO("main-service", servletRequest));
+        statisticsService.addHit(HitMapper.toHitRequestDTO("main-service", servletRequest));
         return eventShortDtos;
     }
 
@@ -329,7 +329,7 @@ public class EventServiceImpl implements EventService {
         if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new EntityNotFoundException("Событие с таким id не опубликовано.");
         }
-        statisticsService.addHit(HtiMapper.toHitRequestDTO("main-service", servletRequest));
+        statisticsService.addHit(HitMapper.toHitRequestDTO("main-service", servletRequest));
         int confirmedRequests = requestRepository.findAllByEventIdAndStatus(eventId, RequestStatus.CONFIRMED).size();
         int views = getViews(event);
 
@@ -420,7 +420,7 @@ public class EventServiceImpl implements EventService {
 
     // Приватные методы класса
     private int getViews(Event event) {
-        List<String> uris = List.of("events/" + event.getId());
+        List<String> uris = List.of(String.format("/events/%d", event.getId()));
         List<StatsResponseDTO> responseFromStatsService = statisticsService
                 .getStatistics(event.getPublishedOn().format(formatter), LocalDateTime.now().format(formatter), uris, false);
         if (responseFromStatsService.isEmpty()) {
