@@ -23,7 +23,7 @@ public class HitMapper {
                 .uri(statistics.getUri())
                 .ip(statistics.getIp())
                 .app(statistics.getAppName())
-                .timestamp(statistics.getTimestamp().toString())
+                .timestamp(statistics.getTimestamp().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .build();
     }
 }

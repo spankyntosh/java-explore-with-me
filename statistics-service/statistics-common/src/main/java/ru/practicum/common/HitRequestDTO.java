@@ -1,23 +1,26 @@
 package ru.practicum.common;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
+@Getter
+@Setter
 public class HitRequestDTO {
     private Integer id;
-    @NotNull
+    @NotBlank
     private String app;
-    @NotNull
+    @NotBlank
     private String uri;
-    @NotNull
     private String ip;
+    @NotBlank
     private String timestamp;
+
+    @Override
+    public String toString() {
+        return String.format("Запрос на сохранение статистики. app - %s, uri - %s, ip - %s, timestamp - %s", app, uri, ip, timestamp);
+    }
 }

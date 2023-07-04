@@ -3,6 +3,7 @@ package ru.practicum.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.common.HitRequestDTO;
@@ -27,8 +28,9 @@ public class StatisticsController {
     }
 
     @PostMapping("/hit")
+    @ResponseStatus(HttpStatus.CREATED)
     public HitRequestDTO addHit(@Valid @RequestBody HitRequestDTO hitRequestDTO) {
-        log.info("Пришёл запрос на сохранение информации по обращению к эндпоинту");
+        log.info("Пришёл запрос на сохранение информации по обращению к эндпоинту. {}", hitRequestDTO);
         return statisticsService.addHit(hitRequestDTO);
     }
 
@@ -37,7 +39,8 @@ public class StatisticsController {
                                                       @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                                       @RequestParam(required = false) List<String> uris,
                                                       @RequestParam(required = false, defaultValue = "false") Boolean unique) {
-        log.info("Пришёл запрос на получение статистики по посещениям");
-        return statisticsService.getStatistics(start, end, uris, unique);
+        log.info("Пришёл запрос на получение статистики по посещениям. uris - {}, start - {}, end - {}", uris, start, end);
+        Collection<StatsResponseDTO> response = statisticsService.getStatistics(start, end, uris, unique);
+        return response;
     }
 }

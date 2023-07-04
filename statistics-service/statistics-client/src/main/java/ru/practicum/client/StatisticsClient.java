@@ -6,18 +6,19 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.common.HitRequestDTO;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.Objects.nonNull;
 
-@Service
+@Component
 public class StatisticsClient extends BaseClient {
 
     @Autowired
@@ -30,7 +31,7 @@ public class StatisticsClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> saveHit(String path, HitRequestDTO hitRequestDTO) {
+    public ResponseEntity<Object> saveHit(HitRequestDTO hitRequestDTO) {
         return post("/hit", hitRequestDTO);
     }
 
@@ -38,12 +39,21 @@ public class StatisticsClient extends BaseClient {
                                                 LocalDateTime end,
                                                 @Nullable List<String> uris,
                                                 @Nullable Boolean unique) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("start", start);
-        parameters.put("end", end);
+        parameters.put("start", start.format(formatter));
+        parameters.put("end", end.format(formatter));
         if (nonNull(uris)) {
-            parameters.put("uris", uris);
-            return get("/stats?start={start}&end={end}&uris={uris}", parameters);
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < uris.size(); i++) {
+                if (i == uris.size() - 1) {
+                    builder.append(uris.get(i));
+                } else {
+                    builder.append(uris.get(i) + ",");
+                }
+            }
+            parameters.put("uris", builder.toString());
+            return get("/stats?start={start}&end={end}&uris={uris}&unique=true", parameters);
         }
         if (nonNull(unique)) {
             parameters.put("unique", unique);

@@ -1,16 +1,19 @@
 package ru.practicum.common;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
+@Setter
 public class StatsResponseDTO {
     private String app;
     private String uri;
     private long hits;
+
+    @Override
+    public String toString() {
+        return String.format("Статистика. uri - %s, hits - %d", uri, hits);
+    }
 }
