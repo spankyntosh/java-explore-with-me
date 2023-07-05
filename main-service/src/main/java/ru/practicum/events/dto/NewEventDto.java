@@ -33,6 +33,7 @@ public class NewEventDto {
     @NotBlank
     @Size(min = 3, max = 120, message = "текст заголовка должен быть больше 3 и меньше 120 символов")
     private String title;
+    private Boolean isConfirmedParticipantsCreateComment = false;
 
     @Override
     public String toString() {

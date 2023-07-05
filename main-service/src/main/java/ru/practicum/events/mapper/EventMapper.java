@@ -30,6 +30,7 @@ public class EventMapper {
                 .requestModeration(newEventDto.isRequestModeration())
                 .state(EventState.PENDING)
                 .title(newEventDto.getTitle())
+                .isConfirmedParticipantsCreateComment(newEventDto.getIsConfirmedParticipantsCreateComment())
                 .build();
     }
 
@@ -66,6 +67,7 @@ public class EventMapper {
                 .state(event.getState())
                 .title(event.getTitle())
                 .views(views)
+                .isConfirmedParticipantsCreateComment(event.getIsConfirmedParticipantsCreateComment())
                 .build();
 
     }

@@ -8,14 +8,19 @@ import ru.practicum.comments.dto.NewCommentDto;
 import ru.practicum.comments.dto.UpdateCommentDto;
 import ru.practicum.comments.model.Comment;
 import ru.practicum.comments.repository.CommentRepository;
+import ru.practicum.events.enums.RequestStatus;
 import ru.practicum.events.model.Event;
 import ru.practicum.events.repository.EventRepository;
 import ru.practicum.exceptions.EntityNotFoundException;
 import ru.practicum.exceptions.ForbiddenException;
+import ru.practicum.requests.model.Request;
+import ru.practicum.requests.repository.RequestRepository;
 import ru.practicum.users.model.User;
 import ru.practicum.users.repository.UserRepository;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.practicum.comments.mapper.CommentMapper.*;
 
@@ -25,14 +30,17 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
+    private final RequestRepository requestRepository;
 
     @Autowired
     public CommentServiceImpl(CommentRepository commentRepository,
                               UserRepository userRepository,
-                              EventRepository eventRepository) {
+                              EventRepository eventRepository,
+                              RequestRepository requestRepository) {
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
+        this.requestRepository = requestRepository;
     }
 
     @Override
@@ -41,6 +49,15 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new EntityNotFoundException("Пользователь с таким id не найден"));
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException("Событие с таким id не найдено"));
+        if (event.getIsConfirmedParticipantsCreateComment()) {
+            List<Request> confirmedRequests = requestRepository.findAllByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
+            List<Integer> requesterIds = confirmedRequests.stream()
+                    .map(request -> request.getRequester().getId())
+                    .collect(Collectors.toList());
+            if (!requesterIds.contains(userId)) {
+                throw new ForbiddenException("Создавать комментарии могут участники с подтверждённым статусом заявки на событие");
+            }
+        }
         Comment comment = newCommentDtoToModel(newCommentDto, commentator, event);
         return modelToCommentDto(commentRepository.save(comment));
     }

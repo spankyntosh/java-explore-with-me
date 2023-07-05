@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS events (
     request_moderation BOOLEAN NOT NULL,
     state VARCHAR(50) NOT NULL,
     title VARCHAR (200) NOT NULL,
+    comment_only_by_confirmed BOOLEAN NOT NULL,
     FOREIGN KEY (initiator) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (location_id) REFERENCES locations (id) ON DELETE CASCADE
 );

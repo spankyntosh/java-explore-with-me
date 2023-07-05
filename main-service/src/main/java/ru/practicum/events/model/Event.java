@@ -50,4 +50,6 @@ public class Event {
     private EventState state;
     @Column(name = "title")
     private String title;
+    @Column(name = "comment_only_by_confirmed")
+    private Boolean isConfirmedParticipantsCreateComment;
 }
