@@ -29,4 +29,6 @@ public class Comment {
     private User commentator;
     @Column(name = "created_on")
     private LocalDateTime createdOn;
+    @Column(name = "likes")
+    private int likes;
 }

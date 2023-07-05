@@ -15,9 +15,12 @@ public interface CommentService {
 
     void privateDeleteComment(int commentId, int userId);
 
+    void privateAddLikeToComment(int commentId, int userId);
+
     CommentDto adminUpdateComment(UpdateCommentDto updateCommentDto, int commentId);
 
     void adminDeleteComment(int commentId);
 
     Collection<CommentDto> publicGetComments(int eventId, PageRequest request);
+
 }

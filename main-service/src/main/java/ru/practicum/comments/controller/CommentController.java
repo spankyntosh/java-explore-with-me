@@ -54,7 +54,15 @@ public class CommentController {
         commentService.privateDeleteComment(commentId, userId);
     }
 
-    @PatchMapping
+    @PutMapping("/users/{userId}/comments/{commentId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void privateAddLikeToComment(@PathVariable @Positive int userId,
+                                        @PathVariable @Positive int commentId) {
+        log.info("Пришёл запрос на добавление лайка комментарию");
+        commentService.privateAddLikeToComment(commentId, userId);
+    }
+
+    @PatchMapping("/admin/comments/{commentId}")
     @ResponseStatus(HttpStatus.OK)
     public CommentDto adminUpdateComment(@Valid @RequestBody UpdateCommentDto updateCommentDto,
                                          @PathVariable @Positive int commentId) {
@@ -62,7 +70,7 @@ public class CommentController {
         return commentService.adminUpdateComment(updateCommentDto, commentId);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/admin/comments/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void adminDeleteComment(@PathVariable @Positive int commentId) {
         log.info("Пришёл запрос на удаление комментария администратором");

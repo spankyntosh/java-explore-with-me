@@ -19,6 +19,7 @@ public class CommentMapper {
                 .commentator(commentator)
                 .event(event)
                 .createdOn(LocalDateTime.now())
+                .likes(0)
                 .build();
     }
 
@@ -29,6 +30,7 @@ public class CommentMapper {
                 .event(comment.getEvent().getId())
                 .commentator(comment.getCommentator().getId())
                 .createdOn(comment.getCreatedOn())
+                .likes(comment.getLikes())
                 .build();
     }
 

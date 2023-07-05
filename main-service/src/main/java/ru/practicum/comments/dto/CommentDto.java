@@ -16,4 +16,5 @@ public class CommentDto {
     private Integer event;
     private Integer commentator;
     private LocalDateTime createdOn;
+    private Integer likes;
 }

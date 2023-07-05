@@ -7,7 +7,9 @@ import ru.practicum.comments.dto.CommentDto;
 import ru.practicum.comments.dto.NewCommentDto;
 import ru.practicum.comments.dto.UpdateCommentDto;
 import ru.practicum.comments.model.Comment;
+import ru.practicum.comments.model.Like;
 import ru.practicum.comments.repository.CommentRepository;
+import ru.practicum.comments.repository.LikeRepository;
 import ru.practicum.events.enums.RequestStatus;
 import ru.practicum.events.model.Event;
 import ru.practicum.events.repository.EventRepository;
@@ -19,7 +21,9 @@ import ru.practicum.users.model.User;
 import ru.practicum.users.repository.UserRepository;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static ru.practicum.comments.mapper.CommentMapper.*;
@@ -31,16 +35,19 @@ public class CommentServiceImpl implements CommentService {
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
     private final RequestRepository requestRepository;
+    private final LikeRepository likeRepository;
 
     @Autowired
     public CommentServiceImpl(CommentRepository commentRepository,
                               UserRepository userRepository,
                               EventRepository eventRepository,
-                              RequestRepository requestRepository) {
+                              RequestRepository requestRepository,
+                              LikeRepository likeRepository) {
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
         this.requestRepository = requestRepository;
+        this.likeRepository = likeRepository;
     }
 
     @Override
@@ -87,6 +94,19 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public void privateAddLikeToComment(int commentId, int userId) {
+        User commentator = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь с таким id не найден"));
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("Комментарий с таким id не найден"));
+        Like like = Like.builder()
+                .user(commentator)
+                .comment(comment)
+                .build();
+        likeRepository.save(like);
+    }
+
+    @Override
     public CommentDto adminUpdateComment(UpdateCommentDto updateCommentDto, int commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("Комментарий с таким id не найден"));
@@ -107,6 +127,18 @@ public class CommentServiceImpl implements CommentService {
         if (!eventRepository.existsById(eventId)) {
             throw new EntityNotFoundException("Событие с таким id не найдено");
         }
-        return modelToCommentDtos(commentRepository.findAllByEventId(eventId, request));
+        Collection<Comment> comments = commentRepository.findAllByEventId(eventId, request);
+        Collection<Integer> commentIds = comments.stream()
+                .map(comment -> comment.getId())
+                .collect(Collectors.toList());
+
+        Map<Integer, Integer> commentIdLikesMap = new HashMap<>();
+        commentIds.forEach(commentId -> commentIdLikesMap.put(commentId, likeRepository.findByCommentId(commentId).size()));
+        comments.stream()
+                .forEach(comment -> {
+                    comment.setLikes(commentIdLikesMap.get(comment.getId()));
+                });
+
+        return modelToCommentDtos(comments);
     }
 }
